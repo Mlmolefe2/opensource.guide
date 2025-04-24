@@ -1,0 +1,48 @@
+# This config was automatically generated from your source code
+# Stacks detected: cicd:github-actions:.github/workflows,deps:node:.,deps:ruby:.
+version: 2.1
+orbs:
+  node: circleci/node@5
+  ruby: circleci/ruby@2.0.1
+jobs:
+  test-node:
+    # Install node dependencies and run tests
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run tests
+          command: npm test --passWithNoTests
+  test-ruby:
+    # Install gems, run rake tests
+    docker:
+      - image: cimg/ruby:3.2-node
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: rake test
+          command: bundle exec rake test
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
+      - run:
+          name: found github actions config
+          command: ':'
+workflows:
+  build-and-test:
+    jobs:
+      - test-node
+      - test-ruby
+    # - deploy:
+    #     requires:
+    #       - test-node
+    #       - test-ruby
